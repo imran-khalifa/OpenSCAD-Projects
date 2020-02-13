@@ -13,33 +13,35 @@ $fn = 100;
 /* Units 1:1mm */
 /* Thickness of material */
 mT 	= 6;
+/* Screw hole size */
+sHS = 4;
 
-/* Control Panel Module Dimensions */
+/* Control panel module dimensions */
 cpX  = 14 * 25;	 	// 14 inches
 cpY  = 8 * 25;		//  8 inches
 cpD  = [cpX, cpY];
 cpH  = mT;			// Height of control panel layer
 
-/* Inner Frame Dimensions */
-fW = 25;			// Frame Width
+/* Inner frame dimensions */
+fW = 25;			// Frame width
 /* TODO: Should I try smaller ones? */
-sH = 50;			// Standoff Height
-iFLFJC = 15;		// Inner Frame Length Finger Joint Count
-iFDFJC = 9;			// Inner Frame Depth Finger Joint Count
+sH = 50;			// Standoff height
+iFLFJC = 15;		// Inner frame length finger joint count
+iFDFJC = 9;			// Inner frame depth finger joint count
 
-/* Bottom Panel Dimensions */
+/* Bottom panel dimensions */
 bwH = mT;			// Height of wood layer of bottom panel
 bfH = 2;			// Height of foam layer of bottom panel
 bpH = bwH + bfH;	// Height of bottom panel
 
-/* Outer Frame Dimensions */
-ofH = (bfH / 2) + bwH + mT + sH + cpH;
-oFFJC = 5;			// Outer Frame Finger Joint Count
+/* Outer frame dimensions */
+ofH = (bfH / 2) + bwH + mT + sH + cpH; // Height of the outer frame
+oFFJC = 5;								// Outer Frame Finger Joint Count
 
 /* Defines position of standoffs */
 module Standoff_Positions()
 {
-	/* First Column */
+	/* First column */
 	translate([fW/2, 0, 0])
 	{
 		translate([0, fW/2, 0]) 		children(0);
@@ -47,14 +49,14 @@ module Standoff_Positions()
 		translate([0, cpY - fW/2, 0]) 	children(0);
 	}
 
-	/* Second Column */
+	/* Second column */
 	translate([cpX/2, 0, 0])
 	{
 		translate([0, fW/2, 0]) 		children(0);
 		translate([0, cpY - fW/2, 0]) 	children(0);
 	}
 
-	/* Third Column */
+	/* Third column */
 	translate([cpX - fW/2, 0, 0])
 	{
 		translate([0, fW/2, 0]) 		children(0);
@@ -63,7 +65,9 @@ module Standoff_Positions()
 	}
 }
 
-/* Defines a Layer of the inner frame */
+/* Defines a layer of the inner frame
+   Accepts one child which is placed at the standoff positions
+ */
 module Inner_Frame_Layer_2D()
 {
 	translate([mT, mT, 0])
@@ -78,9 +82,9 @@ module Inner_Frame_Layer_2D()
 
 			difference()
 			{
-				/* Main Body */
+				/* Main body */
 				square(cpD);
-				/* Inner Cut */
+				/* Inner cut */
 				translate([fW, fW, 0])	square([cpX - (fW*2), cpY - (fW*2)]);
 				/* Cutout for standoffs */
 				Standoff_Positions() children(0);		
@@ -89,17 +93,21 @@ module Inner_Frame_Layer_2D()
 	}
 }
 
+/* Defines a blank outer frame panel for the front and back */
 module Outer_Frame_Length_2D()
 {
 	translate([mT, 0, 0])
 	{
 		union()
 		{
+			/* Create fingerjoint tabs on the left and right side of the panel */
 			Fingerjoint_Tabs_2D("LEFT", "EVEN", ofH, oFFJC, mT);
 			translate([cpX,0,0]) Fingerjoint_Tabs_2D("RIGHT","EVEN", ofH, oFFJC, mT);
 			difference()
 			{
+				/* Main body of the panel */
 				square([cpX, ofH]);
+				/* Cut out gaps for the inner frame to slot into */
 				translate([0, bfH /2 + bwH, 0])
 				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpX, iFLFJC, mT);
 				translate([0, bfH/2 + bwH + sH, 0])
@@ -110,17 +118,22 @@ module Outer_Frame_Length_2D()
 	}
 }
 
+/* Defines a blank outer frame panel for the left and right side */
 module Outer_Frame_Depth_2D()
 {
 	translate([mT, 0, 0])
 	{
 		union()
 		{
+			/* Create fingerjoint tabs for the left and right side of the panel */
 			Fingerjoint_Tabs_2D("LEFT", "ODD", ofH, oFFJC, mT);
 			translate([cpY,0,0]) Fingerjoint_Tabs_2D("RIGHT","ODD", ofH, oFFJC, mT);
 			difference()
 			{
+				/* Main body */
 				square([cpY, ofH]);
+				/* Cut out gaps for the inner frame to slot into */
+				/* TODO: I could common this... */
 				translate([0, bfH /2 + bwH, 0])
 				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpY, iFDFJC, mT);
 				translate([0, bfH/2 + bwH + sH, 0])
@@ -130,13 +143,14 @@ module Outer_Frame_Depth_2D()
 	}
 }
 
-/* Panel for Top and Bottom */
-module Panel_2D()
+/* Panel for top and bottom */
+module Panel_2D(hS=sHS)
 {
 	difference()
 	{
 		square(cpD);
-		Standoff_Positions() circle(d=5);
+		/* Cut out holes for screws */
+		Standoff_Positions() circle(d=hS);
 	}
 }
 
@@ -145,13 +159,14 @@ module Test_Fit()
 	translate([mT, mT, 0])
 	{
 		/* Foam Layer */
-		linear_extrude(bfH) color([0,0,0]) Panel_2D();
+		/* TODO: Magic Number... */
+		linear_extrude(bfH) Panel_2D(8);
 		/* Sheet Wood Bottom Panel */
 		translate([0, 0, bfH]) linear_extrude(mT) Panel_2D();
 	}
 
 	/* Outer Frame */
-	translate([0, 0, bfH /2])
+	#translate([0, 0, bfH /2])
 	{
 		rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
 		translate([cpX + mT, 0, 0]) rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
@@ -166,7 +181,7 @@ module Test_Fit()
 	{
 		
 		/* Bottom inner frame layer */
-		linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=4); 
+		linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
 		
 		translate([0, 0, 3]) 
 		{
@@ -179,7 +194,7 @@ module Test_Fit()
 		{
 			/* Top Inner Frame Layers */
 			linear_extrude(mT/2) Inner_Frame_Layer_2D() S_970500451_2D(0);
-			translate([0,0,mT/2]) linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=4); 
+			translate([0,0,mT/2]) linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
 			
 			/* Control Panel */
 			translate([cpX/2 + mT, cpY/2 + mT, mT])linear_extrude(3) SegaAstroP2_8B_ControlPanel_L3();
@@ -189,7 +204,7 @@ module Test_Fit()
 }
 
 /* Individual Layouts */
-//Inner_Frame_Layer_2D() circle(d=4);			/* Need 2 of these (3mm) */
+//Inner_Frame_Layer_2D() circle(d=sHS);			/* Need 2 of these (3mm) */
 //Inner_Frame_Layer_2D() S_970500451_2D(0);		/* Need 2 of these (3mm) */
 /* TODO: Create a layout which has Connectors and Extra Buttons (Maybe even a handle) */
 //Outer_Frame_Length_2D();						/* Need 1 of these (6mm) */
