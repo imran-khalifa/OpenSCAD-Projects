@@ -1,5 +1,6 @@
 use <../Generic/Standoffs.scad>
 use <../Generic/Fingerjoints.scad>
+use <../GenericArcade/SanwaModules.scad>
 use <../GenericArcade/SegaAstroP2.scad>
 
 /* TODO: 
@@ -154,6 +155,15 @@ module Panel_2D(hS=sHS)
 	}
 }
 
+module Control_Panel_Layer_2D()
+{
+	difference()
+	{
+		Panel_2D();
+		translate([cpX/2, cpY/2 + 12, 0]) children(0);
+	}
+}
+
 module Test_Fit()
 {
 	translate([mT, mT, 0])
@@ -197,8 +207,8 @@ module Test_Fit()
 			translate([0,0,mT/2]) linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
 			
 			/* Control Panel */
-			translate([cpX/2 + mT, cpY/2 + mT, mT])linear_extrude(3) SegaAstroP2_8B_ControlPanel_L3();
-			translate([cpX/2 + mT, cpY/2 + mT, mT * 1.5])linear_extrude(3) SegaAstroP2_8B_ControlPanel_L1();
+			translate([mT, mT, mT])linear_extrude(3) Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFP1_L_Holes();
+			translate([mT, mT, mT * 1.5])linear_extrude(3) Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFTP8YT_L_CPHole();
 		}
 	}
 }
@@ -210,6 +220,7 @@ module Test_Fit()
 //Outer_Frame_Length_2D();						/* Need 1 of these (6mm) */
 /* TODO: Create a Layout which has Hole for Key Ring */
 //Outer_Frame_Depth_2D();						/* Need 1 of these (6mm) */
-//Panel();
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFP1_L_Holes();
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFTP8YT_L_CPHole();
 
 Test_Fit();
