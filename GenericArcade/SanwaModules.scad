@@ -5,11 +5,24 @@
  * - Get dimensions for Sanwa Joystick
  */
 
+$fn=100;
 /* Button Modules */
+/* Creates a Hole large enough for a Sanwa OSBF30 Button */
 module OBSF30_L_Hole()
 {
 	circle(15);	
 }
+
+/* Rough Model of the Sanwa OBSF30, Useful for Test Fitting */
+module OBSF30_3D(cp=[1.0, 1.0, 1.0], cb=[0.0, 0.0, 0.0])
+{
+	/*TODO Add Clips if I can get the Dimensions */
+	translate([0,0,3]) color(cp) linear_extrude(3.5) circle(d=25);
+	color(cb) linear_extrude(3) circle(d=33.2);
+	translate([0,0,-31.7]) linear_extrude(31.7) circle(d=29.5);
+}
+
+OBSF30_3D();
 
 module OBSF24_L_Hole()
 {
@@ -56,5 +69,6 @@ module JLFP1_L_Holes()
 	translate([0, +41.25, 0]) hl();
 	translate([0, -41.25, 0]) hl();
 
-	square(53, true);
+	JLFTP8YT_L_CPHole();
+	//square(53, true);
 }
