@@ -186,7 +186,9 @@ module Test_Fit()
 			translate([0, cpY + mT, 0]) rotate([90, 0, 0]) 
 			{
 				#linear_extrude(mT) Outer_Frame_Length_2D();
+				rotate([180, 0, 0]) translate([cpX/4 *3 + (30 + 12), -ofH/2, -3])  OBSF30_3D();
 				rotate([180, 0, 0]) translate([cpX/4 *3, -ofH/2, -3])  OBSF30_3D();
+				rotate([180, 0, 0]) translate([cpX/4 *3 - (30 + 12), -ofH/2, -3])  OBSF30_3D();
 			}
 		}
 	}
