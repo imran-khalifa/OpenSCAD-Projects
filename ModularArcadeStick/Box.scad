@@ -176,14 +176,18 @@ module Test_Fit()
 	}
 
 	/* Outer Frame */
-	#translate([0, 0, bfH /2])
+	translate([0, 0, bfH /2])
 	{
-		rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
-		translate([cpX + mT, 0, 0]) rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
+		#rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
+		#translate([cpX + mT, 0, 0]) rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
 		translate([0, mT, 0])
 		{
-			rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
-			translate([0, cpY + mT, 0]) rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
+			#rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
+			translate([0, cpY + mT, 0]) rotate([90, 0, 0]) 
+			{
+				#linear_extrude(mT) Outer_Frame_Length_2D();
+				rotate([180, 0, 0]) translate([cpX/4 *3, -ofH/2, -3])  OBSF30_3D();
+			}
 		}
 	}
 	
@@ -207,8 +211,36 @@ module Test_Fit()
 			translate([0,0,mT/2]) linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
 			
 			/* Control Panel */
-			translate([mT, mT, mT])linear_extrude(3) Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFP1_L_Holes();
-			translate([mT, mT, mT * 1.5])linear_extrude(3) Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFTP8YT_L_CPHole();
+			translate([mT, mT, mT])
+				linear_extrude(3) 
+					Control_Panel_Layer_2D() 
+					{ 
+						SegaAstroP2_8B_Layout() 
+						{ 
+							JLFP1_L_Holes();
+							OBSF30_L_Hole();
+						} 
+					};
+			translate([mT, mT, mT * 1.5])
+			{
+				linear_extrude(3) 
+					Control_Panel_Layer_2D()
+					{
+						SegaAstroP2_8B_Layout() 
+						{ 
+							JLFTP8YT_L_CPHole();
+							OBSF30_L_Hole();
+						}
+					};
+
+				/* Buttons */
+				translate([cpX/2,cpY/2 +12,3])
+				SegaAstroP2_8B_Layout() 
+				{ 
+					circle(0);
+					OBSF30_3D();
+				}
+			}
 		}
 	}
 }

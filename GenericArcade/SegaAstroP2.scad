@@ -16,16 +16,16 @@ module ButtonRow(a=true, b=true, c=true, d=true)
 {
 	// A B C D
 
-	if(a) OBSF30_L_Hole(); 				// A
+	if(a) children(0); 					// A
 	translate([30.5, 20, 0])			// A->B
 	{
-		if(b) OBSF30_L_Hole();			// B
+		if(b) children(0);				// B
 		translate([36,0,0])				// B->C
 		{
-			if(c) OBSF30_L_Hole();		// C
+			if(c) children(0);			// C
 			translate([36,-9,0])		// C->D
 			{
-				if(d) OBSF30_L_Hole();	// D
+				if(d) children(0);		// D
 			}
 		}
 	}
@@ -39,9 +39,9 @@ module SegaAstroP2_8B_Layout()
 		children(0);		// Joystick
 
 		// Top Layer, rel. to Joystick
-		translate([63,19,0])  ButtonRow();
+		translate([63,19,0])  ButtonRow() children(1);
 		// Bottom Layer, rel to Joystick
-		translate([63,-20,0]) ButtonRow();
+		translate([63,-20,0]) ButtonRow() children(1);
 	}
 }
 
