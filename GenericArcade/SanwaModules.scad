@@ -14,19 +14,26 @@ module OBSF30_L_Hole()
 }
 
 /* Rough Model of the Sanwa OBSF30, Useful for Test Fitting */
-module OBSF30_3D(cp=[1.0, 1.0, 1.0], cb=[0.0, 0.0, 0.0])
+module OBSF30_3D(cp=[1.0, 1.0, 1.0], cs=[0.0, 0.0, 0.0])
 {
 	/*TODO Add Clips if I can get the Dimensions */
 	translate([0,0,3]) color(cp) linear_extrude(3.5) circle(d=25);
-	color(cb) linear_extrude(3) circle(d=33.2);
-	translate([0,0,-31.7]) linear_extrude(31.7) circle(d=29.5);
+	color(cs) linear_extrude(3) circle(d=33.2);
+	translate([0,0,-32]) linear_extrude(32) circle(d=29.5);
 }
-
-OBSF30_3D();
 
 module OBSF24_L_Hole()
 {
 	circle(12);
+}
+
+/* Rough Model of the Sanwa OBSF24, Useful for Test Fitting */
+module OBSF24_3D(cp=[1.0, 1.0, 1.0], cs=[0.0, 0.0, 0.0])
+{
+	/*TODO Add Clips if I can get the Dimensions */
+	translate([0,0,2.8]) color(cp) linear_extrude(3.5) circle(d=19.5);
+	color(cs) linear_extrude(2.8) circle(d=27);
+	translate([0,0,-32]) linear_extrude(32) circle(d=23.5);
 }
 
 /* Joystick Modules */
