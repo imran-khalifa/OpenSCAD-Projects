@@ -13,15 +13,16 @@ $fn = 100;
 
 /* Units 1:1mm */
 /* Thickness of material */
-mT 	= 6;
+mT 	= 6;		// Main Material
+mT2 = 3;		// Thinner Material
 /* Screw hole size */
 sHS = 4;
 
 /* Control panel module dimensions */
-cpX  = 14 * 25;	 	// 14 inches
-cpY  = 8 * 25;		//  8 inches
+cpX  = 14 * 25;	 			// 14 inches
+cpY  = 8 * 25;				//  8 inches
 cpD  = [cpX, cpY];
-cpH  = mT;			// Height of control panel layer
+cpH  = mT + mT2;			// Height of control panel layer
 
 /* Inner frame dimensions */
 fW = 25;			// Frame width
@@ -35,9 +36,13 @@ bwH = mT;			// Height of wood layer of bottom panel
 bfH = 2;			// Height of foam layer of bottom panel
 bpH = bwH + bfH;	// Height of bottom panel
 
+/* Button Colors */
+mbpc = [173/255, 216/255, 230/255];	/* Main Buttons Plunger Colour */
+mbsc = [0/255  , 35/255 , 102/255];	/* Main Buttons Surround Colour */
+
 /* Outer frame dimensions */
-ofH = (bfH / 2) + bwH + mT + sH + cpH; // Height of the outer frame
-oFFJC = 5;								// Outer Frame Finger Joint Count
+ofH = (bfH / 2) + bwH + (2 * mT2) + sH + cpH; 	// Height of the outer frame (
+oFFJC = 5;										// Outer Frame Finger Joint Count
 
 /* Defines position of standoffs */
 module Standoff_Positions()
@@ -170,7 +175,7 @@ module Test_Fit()
 	{
 		/* Foam Layer */
 		/* TODO: Magic Number... */
-		linear_extrude(bfH) Panel_2D(8);
+		color("black") linear_extrude(bfH) Panel_2D(8);
 		/* Sheet Wood Bottom Panel */
 		translate([0, 0, bfH]) linear_extrude(mT) Panel_2D();
 	}
@@ -182,13 +187,15 @@ module Test_Fit()
 		#translate([cpX + mT, 0, 0]) rotate([90, 0, 90]) linear_extrude(mT) Outer_Frame_Depth_2D();
 		translate([0, mT, 0])
 		{
+			/* Top Wall */
 			#rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
 			translate([0, cpY + mT, 0]) rotate([90, 0, 0]) 
 			{
 				#linear_extrude(mT) Outer_Frame_Length_2D();
-				rotate([180, 0, 0]) translate([cpX/4 *3 + (30 + 12), -ofH/2, -3])  OBSF30_3D();
-				rotate([180, 0, 0]) translate([cpX/4 *3, -ofH/2, -3])  OBSF30_3D();
-				rotate([180, 0, 0]) translate([cpX/4 *3 - (30 + 12), -ofH/2, -3])  OBSF30_3D();
+				/* Start Select Home Buttons */
+				rotate([180, 0, 0]) translate([cpX/4 *3 + (24 + 12), -ofH/2, -3])  OBSF24_3D();
+				rotate([180, 0, 0]) translate([cpX/4 *3, -ofH/2, -3])  OBSF24_3D();
+				rotate([180, 0, 0]) translate([cpX/4 *3 - (24 + 12), -ofH/2, -3])  OBSF24_3D();
 			}
 		}
 	}
@@ -197,24 +204,25 @@ module Test_Fit()
 	{
 		
 		/* Bottom inner frame layer */
-		linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
+		linear_extrude(mT2) Inner_Frame_Layer_2D() circle(d=sHS); 
 		
 		translate([0, 0, 3]) 
 		{
 			/* Inner Layer of Frame, has cutout of standoffs to ensure a locking fit */
-			linear_extrude(mT/2) Inner_Frame_Layer_2D() S_970500451_2D(0);
+			linear_extrude(mT2) Inner_Frame_Layer_2D() S_970500451_2D(0);
 			/* Standoffs */
 			translate([mT, mT, 0]) Standoff_Positions() S_970500451();
 		}
 		translate([0, 0, sH])
 		{
 			/* Top Inner Frame Layers */
-			linear_extrude(mT/2) Inner_Frame_Layer_2D() S_970500451_2D(0);
-			translate([0,0,mT/2]) linear_extrude(mT/2) Inner_Frame_Layer_2D() circle(d=sHS); 
+			linear_extrude(mT2) Inner_Frame_Layer_2D() S_970500451_2D(0);
+			translate([0,0,mT2]) linear_extrude(mT2) Inner_Frame_Layer_2D() circle(d=sHS); 
 			
 			/* Control Panel */
 			translate([mT, mT, mT])
-				linear_extrude(3) 
+			{
+				linear_extrude(mT) 
 					Control_Panel_Layer_2D() 
 					{ 
 						SegaAstroP2_8B_Layout() 
@@ -223,24 +231,25 @@ module Test_Fit()
 							OBSF30_L_Hole();
 						} 
 					};
-			translate([mT, mT, mT * 1.5])
-			{
-				linear_extrude(3) 
-					Control_Panel_Layer_2D()
-					{
-						SegaAstroP2_8B_Layout() 
-						{ 
-							JLFTP8YT_L_CPHole();
-							OBSF30_L_Hole();
-						}
-					};
+				translate([0, 0, mT])
+				{
+					linear_extrude(mT2) 
+						Control_Panel_Layer_2D()
+						{
+							SegaAstroP2_8B_Layout() 
+							{ 
+								JLFTP8YT_L_CPHole();
+								OBSF30_L_Hole();
+							}
+						};
 
-				/* Buttons */
-				translate([cpX/2,cpY/2 +12,3])
-				SegaAstroP2_8B_Layout() 
-				{ 
-					circle(0);
-					OBSF30_3D();
+					/* Buttons */
+					translate([cpX/2,cpY/2 +12,3])
+					SegaAstroP2_8B_Layout() 
+					{ 
+						circle(0);
+						OBSF30_3D(cp=mbpc, cs=mbsc);
+					}
 				}
 			}
 		}
