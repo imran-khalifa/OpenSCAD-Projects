@@ -115,9 +115,9 @@ module Outer_Frame_Length_2D()
 				square([cpX, ofH]);
 				/* Cut out gaps for the inner frame to slot into */
 				translate([0, bfH /2 + bwH, 0])
-				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpX, iFLFJC, mT);
+				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpX, iFLFJC, mT2*2);
 				translate([0, bfH/2 + bwH + sH, 0])
-				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpX, iFLFJC, mT);
+				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpX, iFLFJC, mT2*2);
 			}
 		}
 		
@@ -141,9 +141,9 @@ module Outer_Frame_Depth_2D()
 				/* Cut out gaps for the inner frame to slot into */
 				/* TODO: I could common this... */
 				translate([0, bfH /2 + bwH, 0])
-				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpY, iFDFJC, mT);
+				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpY, iFDFJC, mT2*2);
 				translate([0, bfH/2 + bwH + sH, 0])
-				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpY, iFDFJC, mT);
+				Fingerjoint_Slots_2D("HORIZONTAL", "ODD", cpY, iFDFJC, mT2*2);
 			}
 		}
 	}
@@ -206,7 +206,7 @@ module Test_Fit()
 		/* Bottom inner frame layer */
 		linear_extrude(mT2) Inner_Frame_Layer_2D() circle(d=sHS); 
 		
-		translate([0, 0, 3]) 
+		translate([0, 0, mT2]) 
 		{
 			/* Inner Layer of Frame, has cutout of standoffs to ensure a locking fit */
 			linear_extrude(mT2) Inner_Frame_Layer_2D() S_970500451_2D(0);
@@ -220,7 +220,7 @@ module Test_Fit()
 			translate([0,0,mT2]) linear_extrude(mT2) Inner_Frame_Layer_2D() circle(d=sHS); 
 			
 			/* Control Panel */
-			translate([mT, mT, mT])
+			translate([mT, mT, mT2 * 2])
 			{
 				linear_extrude(mT) 
 					Control_Panel_Layer_2D() 
