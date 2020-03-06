@@ -26,3 +26,24 @@ module S_970500451_2D(HS=4)
 		circle(d=HS);
 	}
 }
+
+module HexStandoff_2D(WS, HS)
+{
+	
+	difference()
+	{
+		RegularPolygon_2D(6, HexConvert_SideToSide_CentreToVertex(WS));
+		circle(d=HS);
+	}
+}
+
+module HexStandoff_3D(WS, HS, SL, TL)
+{
+	
+	union()
+	{
+		linear_extrude(SL) HexStandoff_2D(WS, HS);
+		translate([0, 0, TL]) cylinder(d=HS+1, h=SL-(TL*2));
+	}
+}
+
