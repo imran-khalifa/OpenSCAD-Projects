@@ -22,9 +22,9 @@ module OBSF30_3D(cp=[1.0, 1.0, 1.0], cs=[0.0, 0.0, 0.0])
 	translate([0,0,-32]) linear_extrude(32) circle(d=29.5);
 }
 
-module OBSF24_L_Hole()
+module OBSF24_L_Hole(padding=0)
 {
-	circle(12);
+	circle(d=(24 + padding));
 }
 
 /* Rough Model of the Sanwa OBSF24, Useful for Test Fitting */
@@ -42,7 +42,7 @@ module JLFTP8YT_L_CPHole()
 {
 	hD = 24;
 
-	circle(hD/2);
+	circle(d=hD);
 }
 
 /* 2D Layout for JLF-P1 Mounting Plate
@@ -65,13 +65,14 @@ module JLFP1_L_Holes()
 {
 	module hl()
 	{
-		circle(hD/2);
-		translate([-20, 0, 0]) circle(hD/2);
-		translate([+20, 0, 0]) circle(hD/2);
+		circle(d=hDC);
+		translate([-20, 0, 0]) circle(d=hD);
+		translate([+20, 0, 0]) circle(d=hD);
 	}
 
 	// Hole diameter
-	hD = 5;
+	hDC = 6;
+	hD =  4;
 
 	translate([0, +41.25, 0]) hl();
 	translate([0, -41.25, 0]) hl();
