@@ -8,9 +8,20 @@
 $fn=100;
 /* Button Modules */
 /* Creates a Hole large enough for a Sanwa OSBF30 Button */
-module OBSF30_L_Hole()
+
+tW = 6;
+module OBSF30_L_Hole(padding=0, tab=false)
 {
-	circle(15);	
+	HS=30;
+	union()
+	{
+		circle(d=(HS + padding));	
+		if(tab==true)
+		{
+			translate([0, HS/2, 0]) square([tW, 6], true);
+			translate([0, -HS/2, 0]) square([tW, 6], true);
+		}
+	}
 }
 
 /* Rough Model of the Sanwa OBSF30, Useful for Test Fitting */
@@ -22,9 +33,18 @@ module OBSF30_3D(cp=[1.0, 1.0, 1.0], cs=[0.0, 0.0, 0.0])
 	translate([0,0,-32]) linear_extrude(32) circle(d=29.5);
 }
 
-module OBSF24_L_Hole(padding=0)
+module OBSF24_L_Hole(padding=0, tab=false)
 {
-	circle(d=(24 + padding));
+	HS=24;
+	union()
+	{
+		circle(d=(HS + padding));
+		if(tab==true)
+		{
+			translate([0, HS/2, 0]) square([tW, 6], true);
+			translate([0, -HS/2, 0]) square([tW, 6], true);
+		}
+	}	
 }
 
 /* Rough Model of the Sanwa OBSF24, Useful for Test Fitting */
