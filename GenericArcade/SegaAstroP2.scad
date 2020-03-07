@@ -41,7 +41,7 @@ module SegaAstroP2_8B_Layout()
 		// Top Layer, rel. to Joystick
 		translate([63,19,0])  ButtonRow() children(1);
 		// Bottom Layer, rel to Joystick
-		translate([63,-20,0]) ButtonRow() children(1);
+		translate([63,-20,0]) ButtonRow() rotate([0, 0, 315]) children(1);
 	}
 }
 
