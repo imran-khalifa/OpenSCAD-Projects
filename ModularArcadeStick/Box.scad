@@ -1,5 +1,6 @@
 use <../Generic/Standoffs.scad>
 use <../Generic/Fingerjoints.scad>
+use <../Generic/Neutrik_NE8FDP.scad>
 use <../GenericArcade/SanwaModules.scad>
 use <../GenericArcade/SegaAstroP2.scad>
 
@@ -169,7 +170,7 @@ module Outer_Frame_Length_Top_L1_2D()
 		}
 		translate([cpX * tPNP, ofH/2, 0])
 		{
-			square([26, 31], true);
+			NE8FDP_Cutout_2D();
 		}
 	}
 }
@@ -187,9 +188,7 @@ module Outer_Frame_Length_Top_L2_2D()
 		}
 		translate([cpX * tPNP, ofH/2, 0])
 		{
-			circle(d=24);
-			translate([+(19/2), -12, 0]) circle(d=3.2);
-			translate([-(19/2), 12, 0]) circle(d=3.2);
+			NE8FDP_Holes_2D();
 		}
 	}
 }
@@ -234,11 +233,10 @@ module Test_Fit()
 		{
 			/* Top Wall */
 			#rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
-Outer_Frame_Length_Top_L1_2D();
 			translate([0, cpY + mT2, 0]) rotate([90, 0, 0]) 
 			{
 				#linear_extrude(mT2) Outer_Frame_Length_Top_L1_2D();
-				translate([0,0,-mT2])linear_extrude(mT2) Outer_Frame_Length_Top_L2_2D();
+				#translate([0,0,-mT2])linear_extrude(mT2) Outer_Frame_Length_Top_L2_2D();
 				/* Start Select Home Buttons */
 				rotate([180, 0, 0]) translate([cpX * tPBP + (24 + tPBS), -ofH/2, 0])  OBSF24_3D();
 				rotate([180, 0, 0]) translate([cpX * tPBP , -ofH/2, 0])  OBSF24_3D();
@@ -306,7 +304,7 @@ Outer_Frame_Length_Top_L1_2D();
 /* Individual Layouts */
 
 // mT mm
-Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
 //Outer_Frame_Depth_2D();
 //Outer_Frame_Depth_2D();	
 //Outer_Frame_Length_2D();
@@ -323,11 +321,10 @@ Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hol
 //Outer_Frame_Length_Top_L1_2D();
 //Outer_Frame_Length_Top_L2_2D();
 /* TODO: Top Panel */
-//Test_Fit();
+Test_Fit();
 
 module 3mm_Print_1()
 {
-	#square([400, 600]);
 	translate([5, 5, 0])
 	{
 		Outer_Frame_Length_Top_L1_2D();
@@ -336,20 +333,61 @@ module 3mm_Print_1()
 		translate([0, 150, 0])
 		Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 		translate([0, 370, 0])
-		Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
+		Inner_Frame_Layer_2D() circle(d=sHS);	
 	}
 }
 
 module 3mm_Print_2()
 {
-	#square([400, 600]);
 	translate([5, 5, 0])
 	{
 		Inner_Frame_Layer_2D() circle(d=sHS);
 		translate([0, 220, 0])
-		Inner_Frame_Layer_2D() circle(d=sHS);	
+		Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 	}
 }
 
+module 6mm_Print_1()
+{
+	translate([5, 5, 0])
+	{
+		Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
+		
+		translate([0, 210, 0])
+		Outer_Frame_Depth_2D();
+		translate([0, 290, 0]) 
+		Outer_Frame_Depth_2D();	
+		/*
+		translate([0, 370, 0])
+		Outer_Frame_Length_2D();
+		*/
+	}
+}
+
+module TestCutouts()
+{
+	difference()
+	{
+		square([180, 70]);
+		#translate([20, 20, 0])
+		{
+			NE8FDP_Cutout_2D();	
+			translate([35,0,0]) NE8FDP_Holes_2D();
+			translate([70,0,0]) OBSF24_L_Hole();
+			translate([105,0,0])	OBSF24_L_Hole(3);
+			translate([140,0,0])	OBSF30_L_Hole();
+	
+			translate([0, 35, 0])
+			{
+				circle(sHS);
+				translate([35,0,0]) circle(6);
+				translate([70,0,0]) HexStandoff_2D(sWS, 0);
+			}
+		}
+	}
+}
+
+//TestCutouts();
 //3mm_Print_1();
-//translate([410, 0, 0]) 3mm_Print_2(); 
+//3mm_Print_2(); 
+//6mm_Print_1();
