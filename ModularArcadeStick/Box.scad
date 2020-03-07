@@ -26,8 +26,10 @@ cpH  = mT + mT2;			// Height of control panel layer
 
 /* Inner frame dimensions */
 fW = 25;			// Frame width
-/* TODO: Should I try smaller ones? */
+
 sH = 50;			// Standoff height
+sWS = 8;			// Standoff wrench size
+sTL = 10;			// Standoff 
 iFLFJC = 15;		// Inner frame length finger joint count
 iFDFJC = 9;			// Inner frame depth finger joint count
 
@@ -44,6 +46,9 @@ mbsc = [0/255  , 35/255 , 102/255];	/* Main Buttons Surround Colour */
 ofH = (bfH / 2) + bwH + (2 * mT2) + sH + cpH; 	// Height of the outer frame (
 oFFJC = 5;										// Outer Frame Finger Joint Count
 
+tPBS = 9;										// Top Panel Button Spacing
+tPBP = 0.80;									// Position of Buttons (%)
+tPNP = 0.15;									// Position of Neutrik Connector (%)
 /* Defines position of standoffs */
 module Standoff_Positions()
 {
@@ -149,6 +154,46 @@ module Outer_Frame_Depth_2D()
 	}
 }
 
+
+module Outer_Frame_Length_Top_L1_2D()
+{
+	spacing = 6;
+	difference()
+	{
+		Outer_Frame_Length_2D();
+		translate([cpX * tPBP, ofH/2, 0]) 
+		{
+			OBSF24_L_Hole();
+			translate([(24 + tPBS), 0, 0]) OBSF24_L_Hole();	
+			translate([-(24 + tPBS), 0, 0]) OBSF24_L_Hole();	
+		}
+		translate([cpX * tPNP, ofH/2, 0])
+		{
+			square([26, 31], true);
+		}
+	}
+}
+
+module Outer_Frame_Length_Top_L2_2D()
+{
+	difference()
+	{
+		Outer_Frame_Length_2D();
+		translate([cpX * tPBP, ofH/2, 0]) 
+		{
+			OBSF24_L_Hole(3);
+			translate([(24 + tPBS), 0, 0]) OBSF24_L_Hole(3);	
+			translate([-(24 + tPBS), 0, 0]) OBSF24_L_Hole(3);	
+		}
+		translate([cpX * tPNP, ofH/2, 0])
+		{
+			circle(d=24);
+			translate([+(19/2), -12, 0]) circle(d=3.2);
+			translate([-(19/2), 12, 0]) circle(d=3.2);
+		}
+	}
+}
+
 /* Panel for top and bottom */
 module Panel_2D(hS=sHS)
 {
@@ -189,13 +234,15 @@ module Test_Fit()
 		{
 			/* Top Wall */
 			#rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
-			translate([0, cpY + mT, 0]) rotate([90, 0, 0]) 
+Outer_Frame_Length_Top_L1_2D();
+			translate([0, cpY + mT2, 0]) rotate([90, 0, 0]) 
 			{
-				#linear_extrude(mT) Outer_Frame_Length_2D();
+				#linear_extrude(mT2) Outer_Frame_Length_Top_L1_2D();
+				translate([0,0,-mT2])linear_extrude(mT2) Outer_Frame_Length_Top_L2_2D();
 				/* Start Select Home Buttons */
-				rotate([180, 0, 0]) translate([cpX/4 *3 + (24 + 12), -ofH/2, -3])  OBSF24_3D();
-				rotate([180, 0, 0]) translate([cpX/4 *3, -ofH/2, -3])  OBSF24_3D();
-				rotate([180, 0, 0]) translate([cpX/4 *3 - (24 + 12), -ofH/2, -3])  OBSF24_3D();
+				rotate([180, 0, 0]) translate([cpX * tPBP + (24 + tPBS), -ofH/2, 0])  OBSF24_3D();
+				rotate([180, 0, 0]) translate([cpX * tPBP , -ofH/2, 0])  OBSF24_3D();
+				rotate([180, 0, 0]) translate([cpX * tPBP - (24 + tPBS), -ofH/2, 0])  OBSF24_3D();
 			}
 		}
 	}
@@ -209,9 +256,9 @@ module Test_Fit()
 		translate([0, 0, mT2]) 
 		{
 			/* Inner Layer of Frame, has cutout of standoffs to ensure a locking fit */
-			linear_extrude(mT2) Inner_Frame_Layer_2D() S_970500451_2D(0);
+			linear_extrude(mT2) Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);//S_970500451_2D(0);
 			/* Standoffs */
-			translate([mT, mT, 0]) Standoff_Positions() S_970500451();
+			translate([mT, mT, 0]) Standoff_Positions() HexStandoff_3D(sWS, sHS, sH, sTL); //S_970500451();
 		}
 		translate([0, 0, sH])
 		{
@@ -257,13 +304,52 @@ module Test_Fit()
 }
 
 /* Individual Layouts */
-//Inner_Frame_Layer_2D() circle(d=sHS);			/* Need 2 of these (3mm) */
-//Inner_Frame_Layer_2D() S_970500451_2D(0);		/* Need 2 of these (3mm) */
-/* TODO: Create a layout which has Connectors and Extra Buttons (Maybe even a handle) */
-//Outer_Frame_Length_2D();						/* Need 1 of these (6mm) */
-/* TODO: Create a Layout which has Hole for Key Ring */
-//Outer_Frame_Depth_2D();						/* Need 1 of these (6mm) */
-//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFP1_L_Holes();
-//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() JLFTP8YT_L_CPHole();
 
-Test_Fit();
+// mT mm
+Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
+//Outer_Frame_Depth_2D();
+//Outer_Frame_Depth_2D();	
+//Outer_Frame_Length_2D();
+
+/* TODO Create Bottom with Holes for PCB Mounting */
+
+
+// mT2 mm
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFTP8YT_L_CPHole(); OBSF30_L_Hole(); }
+//Inner_Frame_Layer_2D() circle(d=sHS);
+//Inner_Frame_Layer_2D() circle(d=sHS);	
+//Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
+//Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
+//Outer_Frame_Length_Top_L1_2D();
+//Outer_Frame_Length_Top_L2_2D();
+/* TODO: Top Panel */
+//Test_Fit();
+
+module 3mm_Print_1()
+{
+	#square([400, 600]);
+	translate([5, 5, 0])
+	{
+		Outer_Frame_Length_Top_L1_2D();
+		translate ([0, 75, 0])
+		Outer_Frame_Length_Top_L2_2D();
+		translate([0, 150, 0])
+		Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
+		translate([0, 370, 0])
+		Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
+	}
+}
+
+module 3mm_Print_2()
+{
+	#square([400, 600]);
+	translate([5, 5, 0])
+	{
+		Inner_Frame_Layer_2D() circle(d=sHS);
+		translate([0, 220, 0])
+		Inner_Frame_Layer_2D() circle(d=sHS);	
+	}
+}
+
+//3mm_Print_1();
+//translate([410, 0, 0]) 3mm_Print_2(); 
