@@ -48,8 +48,8 @@ ofH = (bfH / 2) + bwH + (2 * mT2) + sH + cpH; 	// Height of the outer frame (
 oFFJC = 5;										// Outer Frame Finger Joint Count
 
 tPBS = 9;										// Top Panel Button Spacing
-tPBP = 0.80;									// Position of Buttons (%)
-tPNP = 0.15;									// Position of Neutrik Connector (%)
+tPBP = 0.20;									// Position of Buttons (%)
+tPNP = 0.85;									// Position of Neutrik Connector (%)
 /* Defines position of standoffs */
 module Standoff_Positions()
 {
@@ -233,14 +233,14 @@ module Test_Fit()
 		{
 			/* Top Wall */
 			#rotate([90, 0, 0]) linear_extrude(mT) Outer_Frame_Length_2D();
-			translate([0, cpY + mT2, 0]) rotate([90, 0, 0]) 
+			translate([cpX + (mT * 2), cpY, 0]) rotate([90, 0, 180]) 
 			{
 				#linear_extrude(mT2) Outer_Frame_Length_Top_L1_2D();
-				#translate([0,0,-mT2])linear_extrude(mT2) Outer_Frame_Length_Top_L2_2D();
+				#translate([0,0,mT2])linear_extrude(mT2) Outer_Frame_Length_Top_L2_2D();
 				/* Start Select Home Buttons */
-				rotate([180, 0, 0]) translate([cpX * tPBP + (24 + tPBS), -ofH/2, 0])  OBSF24_3D();
-				rotate([180, 0, 0]) translate([cpX * tPBP , -ofH/2, 0])  OBSF24_3D();
-				rotate([180, 0, 0]) translate([cpX * tPBP - (24 + tPBS), -ofH/2, 0])  OBSF24_3D();
+				translate([cpX * tPBP + (24 + tPBS), ofH/2, mT2])  OBSF24_3D();
+				translate([cpX * tPBP , ofH/2, mT2])  OBSF24_3D();
+				translate([cpX * tPBP - (24 + tPBS), ofH/2, mT2])  OBSF24_3D();
 			}
 		}
 	}
@@ -304,7 +304,7 @@ module Test_Fit()
 /* Individual Layouts */
 
 // mT mm
-//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(0, true); }
 //Outer_Frame_Depth_2D();
 //Outer_Frame_Depth_2D();	
 //Outer_Frame_Length_2D();
@@ -319,7 +319,7 @@ module Test_Fit()
 //Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 //Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 //Outer_Frame_Length_Top_L1_2D();
-//Outer_Frame_Length_Top_L2_2D();
+Outer_Frame_Length_Top_L2_2D();
 /* TODO: Top Panel */
 Test_Fit();
 
@@ -351,7 +351,7 @@ module 6mm_Print_1()
 {
 	translate([5, 5, 0])
 	{
-		Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(); }
+		Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(0, true); }
 		
 		translate([0, 210, 0])
 		Outer_Frame_Depth_2D();
@@ -368,7 +368,7 @@ module TestCutouts()
 {
 	difference()
 	{
-		square([180, 70]);
+		square([180, 75]);
 		#translate([20, 20, 0])
 		{
 			NE8FDP_Cutout_2D();	
@@ -379,9 +379,10 @@ module TestCutouts()
 	
 			translate([0, 35, 0])
 			{
-				circle(sHS);
-				translate([35,0,0]) circle(6);
+				circle(d=sHS);
+				translate([35,0,0]) circle(d=6);
 				translate([70,0,0]) HexStandoff_2D(sWS, 0);
+				translate([105,0,0])	rotate([0,0,90]) OBSF30_L_Hole(0, true);
 			}
 		}
 	}
