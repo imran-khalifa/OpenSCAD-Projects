@@ -94,9 +94,8 @@ module JLFP1_L_Holes()
 	hDC = 6;
 	hD =  4;
 
-	translate([0, +41.25, 0]) hl();
-	translate([0, -41.25, 0]) hl();
+	translate([0, +42.25, 0]) hl();
+	translate([0, -42.25, 0]) hl();
 
 	JLFTP8YT_L_CPHole();
-	//square(53, true);
 }
