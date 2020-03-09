@@ -9,7 +9,9 @@ $fn=100;
 /* Button Modules */
 /* Creates a Hole large enough for a Sanwa OSBF30 Button */
 
-tW = 6;
+tW = 6;		/* Tab Width */
+tL = 6;		/* Tab Length */
+
 module OBSF30_L_Hole(padding=0, tab=false)
 {
 	HS=30;
@@ -18,8 +20,8 @@ module OBSF30_L_Hole(padding=0, tab=false)
 		circle(d=(HS + padding));	
 		if(tab==true)
 		{
-			translate([0, HS/2, 0]) square([tW, 6], true);
-			translate([0, -HS/2, 0]) square([tW, 6], true);
+			translate([0, HS/2, 0]) square([tW, tL], true);
+			translate([0, -HS/2, 0]) square([tW, tL], true);
 		}
 	}
 }
@@ -41,8 +43,8 @@ module OBSF24_L_Hole(padding=0, tab=false)
 		circle(d=(HS + padding));
 		if(tab==true)
 		{
-			translate([0, HS/2, 0]) square([tW, 6], true);
-			translate([0, -HS/2, 0]) square([tW, 6], true);
+			translate([0, HS/2, 0]) square([tW, tL], true);
+			translate([0, -HS/2, 0]) square([tW, tL], true);
 		}
 	}	
 }
