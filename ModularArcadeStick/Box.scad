@@ -213,6 +213,22 @@ module Control_Panel_Layer_2D()
 	}
 }
 
+module Bottom_Panel_2D(hS=sHS)
+{
+	difference()
+	{
+		Panel_2D(sHS);
+		#translate([cpX/2, cpY/2,0]) 
+		{
+			minkowski()
+			{
+				circle(4);
+				square([75,37.5], true);
+			}
+		}
+	}
+}
+
 module Test_Fit()
 {
 	translate([mT, mT, 0])
@@ -320,7 +336,7 @@ module Test_Fit()
 //Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 //Outer_Frame_Length_Top_L1_2D();
 //Outer_Frame_Length_Top_L2_2D();
-Test_Fit();
+//Test_Fit();
 
 module 3mm_Print_1()
 {
@@ -387,7 +403,20 @@ module TestCutouts()
 	}
 }
 
+module TestMountPlate()
+{
+	difference()
+	{
+		square([60, 100]);
+		translate([30, 50, 0]) JLFP1_L_Holes();
+	}
+}
+
+TestMountPlate();
 //TestCutouts();
 //3mm_Print_1();
 //3mm_Print_2(); 
 //6mm_Print_1();
+//Control_Panel_Layer_2D() SegaAstroP2_8B_Layout() { JLFP1_L_Holes(); OBSF30_L_Hole(0, true); }
+//Bottom_Panel_2D();
+
