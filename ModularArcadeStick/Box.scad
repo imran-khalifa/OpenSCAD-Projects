@@ -48,8 +48,8 @@ ofH = (bfH / 2) + bwH + (2 * mT2) + sH + cpH; 	// Height of the outer frame (
 oFFJC = 5;										// Outer Frame Finger Joint Count
 
 tPBS = 9;										// Top Panel Button Spacing
-tPBP = 0.20;									// Position of Buttons (%)
-tPNP = 0.85;									// Position of Neutrik Connector (%)
+tPBP = 0.25;									// Position of Buttons (%)
+tPNP = 0.90;									// Position of Neutrik Connector (%)
 /* Defines position of standoffs */
 module Standoff_Positions()
 {
@@ -336,7 +336,6 @@ module Test_Fit()
 //Inner_Frame_Layer_2D() HexStandoff_2D(sWS, 0);
 //Outer_Frame_Length_Top_L1_2D();
 //Outer_Frame_Length_Top_L2_2D();
-//Test_Fit();
 
 module 3mm_Print_1()
 {
@@ -412,7 +411,8 @@ module TestMountPlate()
 	}
 }
 
-TestMountPlate();
+Test_Fit();
+//TestMountPlate();
 //TestCutouts();
 //3mm_Print_1();
 //3mm_Print_2(); 
